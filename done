@@ -1,0 +1,9 @@
+SELECT coalesce(sex, 'unknown') as sex,
+       round(avg(cancel_rate), 3) as avg_cancel_rate
+FROM   (SELECT user_id,
+               count (distinct order_id) filter (WHERE action = 'cancel_order') / count(distinct order_id) ::decimal as cancel_rate
+        FROM   user_actions
+        GROUP BY user_id) as t
+    LEFT JOIN users using(user_id)
+GROUP BY sex
+ORDER BY sex
